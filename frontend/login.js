@@ -6,7 +6,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
 
     try {
         // Send login information to Authentication endpoint
-        const response = await fetch('http://localhost:8080/api/login', {
+        const response = await fetch('http://localhost:5001/api/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ uname, passwd })
