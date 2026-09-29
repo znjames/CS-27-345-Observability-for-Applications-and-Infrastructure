@@ -3,3 +3,9 @@ services:
     build: auth/
     ports:
       - "${APP_PORT}:5000"
+  db:
+    image: mariadb
+    ports:
+      - 3306:3306
+    environment:
+      - MARIADB_ROOT_PASSWORD=${DB_PASSWD}
