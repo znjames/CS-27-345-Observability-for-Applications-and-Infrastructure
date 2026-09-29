@@ -1,0 +1,5 @@
+services:
+  auth:
+    build: auth/
+    ports:
+      - "${APP_PORT}:5000"
