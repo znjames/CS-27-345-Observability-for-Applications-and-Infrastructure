@@ -6,6 +6,6 @@ services:
   db:
     image: mariadb
     ports:
-      - 3306:3306
+      - "${DB_PORT}:3306"
     environment:
       - MARIADB_ROOT_PASSWORD=${DB_PASSWD}
