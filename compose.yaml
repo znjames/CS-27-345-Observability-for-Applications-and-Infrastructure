@@ -23,10 +23,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
-    volumes: 
-      - ./data:/var/lib/mysql/data
-      - ./logs:/var/lib/mysql/logs
-      - /var/docker/mysql/conf:/etc/mysql
     environment:
       - MARIADB_RANDOM_ROOT_PASSWORD=1
       - MARIADB_DATABASE=${DB_NAME}
