@@ -3,9 +3,32 @@ services:
     build: auth/
     ports:
       - "${APP_PORT}:5000"
-  db:
+    depends_on:
+      mariadb:
+        condition: service_healthy
+        restart: true
+    environment:
+      - DB_HOST=mariadb
+      - DB_USER=${DB_USER}
+      - DB_PASSWD=${DB_PASSWD}
+      - DB_NAME=${DB_NAME}
+    
+  mariadb:
     image: mariadb
     ports:
       - "${DB_PORT}:3306"
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    volumes: 
+      - ./data:/var/lib/mysql/data
+      - ./logs:/var/lib/mysql/logs
+      - /var/docker/mysql/conf:/etc/mysql
     environment:
-      - MARIADB_ROOT_PASSWORD=${DB_PASSWD}
+      - MARIADB_RANDOM_ROOT_PASSWORD=1
+      - MARIADB_DATABASE=${DB_NAME}
+      - MARIADB_USER=${DB_USER}
+      - MARIADB_PASSWORD=${DB_PASSWD}

@@ -6,6 +6,13 @@ FROM python:3.14-slim-trixie
 # Set the working directory to `/code`
 WORKDIR /code
 
+# Install system C dependencies required by mariadb Python driver
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    libmariadb-dev \
+    pkg-config \
+    && rm -rf /var/lib/apt/lists/*
+
 # Set environment variables used by the `flask` command
 ENV FLASK_APP=auth.py
 ENV FLASK_RUN_HOST=0.0.0.0
