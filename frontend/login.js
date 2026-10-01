@@ -16,6 +16,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
 
         // Parse Response
         if (response.ok) {
+            window.location.href = 'account.html';
             localStorage.setItem('authToken', data.token);
             alert('Login Successful!');
         } else {
