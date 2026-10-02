@@ -1,8 +1,13 @@
 services:
+  web:
+    build: frontend/
+    ports:
+      - "8080:80"
+
   auth:
     build: auth/
     ports:
-      - "${APP_PORT}:5000"
+      - "${AUTH_PORT}:5000"
     depends_on:
       mariadb:
         condition: service_healthy
