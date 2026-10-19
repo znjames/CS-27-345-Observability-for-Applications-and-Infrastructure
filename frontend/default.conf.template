@@ -10,7 +10,7 @@ server {
 
     # Routes to authentication server
     location /api/ {
-        proxy_pass http://auth:8000/;
+        proxy_pass http://auth:8000;
         
         # Pass standard headers to backend
         proxy_set_header Host $host;
