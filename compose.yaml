@@ -2,7 +2,7 @@ services:
   web:
     build: frontend/
     ports:
-      - "8080:80"
+      - "${WEB_PORT}:80"
     depends_on:
       - auth
 
