@@ -3,11 +3,13 @@ services:
     build: frontend/
     ports:
       - "8080:80"
+    depends_on:
+      - auth
 
   auth:
     build: auth/
     ports:
-      - "${AUTH_PORT}:8000"
+      - "8000"
     depends_on:
       mariadb:
         condition: service_healthy
@@ -21,7 +23,7 @@ services:
   mariadb:
     image: mariadb
     ports:
-      - "${DB_PORT}:3306"
+      - "${DB_PORT}:3306" # database port is exposed for testing
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       start_period: 10s
