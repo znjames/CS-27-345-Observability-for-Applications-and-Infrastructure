@@ -1,32 +1,23 @@
-# syntax=docker/dockerfile:1
+# Build from gunicorn base image
+FROM ghcr.io/benoitc/gunicorn:24.1.0
 
-# Build an image with the Python 3.14 image
-FROM python:3.14-slim-trixie
-
-# Set the working directory to `/code`
+# Set the working directory to /code
 WORKDIR /code
 
 # Install system C dependencies required by mariadb Python driver
+USER root
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     libmariadb-dev \
     pkg-config \
     && rm -rf /var/lib/apt/lists/*
-
-# Set environment variables used by the `flask` command
-ENV FLASK_APP=auth.py
-ENV FLASK_RUN_HOST=0.0.0.0
-
-# Copy `requirements.txt`
-COPY requirements.txt .
+USER gunicorn
 
 # Install the Python dependencies
+COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-# Copy the current directory `.` in the project to the workdir `.` in the image
+# Copy the current directory to the project workdir
 COPY . .
 
-EXPOSE 5000
-
-# Set the default command for the container to `flask run --debug`
-CMD ["flask", "run", "--debug"]
+CMD ["gunicorn", "auth:app", "--bind", "0.0.0.0:8000"]
