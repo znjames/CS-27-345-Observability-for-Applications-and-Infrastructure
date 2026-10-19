@@ -1,5 +1,7 @@
-from werkzeug.security import check_password_hash
+from werkzeug.security import generate_password_hash
 import mariadb
+import os
+import sys
 
 # Returns a mariadb connection object using preconfigured connection parameters
 def get_db_connection():
