@@ -1,5 +1,5 @@
 from werkzeug.security import check_password_hash
-import mariadbi
+import mariadb
 
 # Returns a mariadb connection object using preconfigured connection parameters
 def get_db_connection():
