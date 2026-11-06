@@ -2,8 +2,13 @@ from flask import Flask, jsonify, request
 from werkzeug.security import check_password_hash
 from db_helper import get_db_connection
 import mariadb
+from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity, create_access_token
 
 app = Flask(__name__)
+
+app.config["JWT_SECRET_KEY"] = "supersecretkey"
+
+jwt = JWTManager(app)
 
 @app.route("/api/login", methods=["POST"])
 def login():
@@ -28,13 +33,54 @@ def login():
 
         # Check if password hash matches provided password
         if result and check_password_hash(result[0], password):
-            return jsonify({"message": "Login successful"}), 200
+            access_token = create_access_token(identity=username)
+
+            return jsonify({
+                "message": "Login successful",
+                "access_token": access_token
+            }), 200
 
         return jsonify({"message": "Invalid credentials"}), 401
 
     except mariadb.Error as e:
         app.logger.error(f"Error during authentication: {e}")
         return jsonify({"message": "Internal server error"}), 500
+    finally:
+        cur.close()
+        conn.close()
+
+
+@app.route("/api/balance", methods=["GET"])
+@jwt_required()
+def get_balance():
+
+    username = get_jwt_identity()
+
+    conn = get_db_connection()
+    if not conn:
+        return jsonify({"message": "Database error"}), 500
+
+    cur = conn.cursor()
+
+    try:
+        cur.execute(
+            "SELECT balance FROM users WHERE uname = ?",
+            (username,)
+        )
+
+        result = cur.fetchone()
+
+        if not result:
+            return jsonify({"message": "User not found"}), 404
+
+        return jsonify({
+            "balance": float(result[0])
+        }), 200
+
+    except mariadb.Error as e:
+        app.logger.error(f"Balance error: {e}")
+        return jsonify({"message": "Internal server error"}), 500
+
     finally:
         cur.close()
         conn.close()
