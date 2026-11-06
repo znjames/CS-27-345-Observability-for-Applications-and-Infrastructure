@@ -26,13 +26,13 @@ services:
     ports:
       - "8001"
     depends_on:
-      mariadb:
+      locations_mariadb:
         condition: service_healthy
     environment:
-      - DB_HOST=mariadb
-      - DB_USER=${DB_USER}
-      - DB_PASSWD=${DB_PASSWD}
-      - DB_NAME=${DB_NAME}
+      - DB_HOST=locations_mariadb
+      - DB_USER=${LOCATIONS_DB_USER}
+      - DB_PASSWD=${LOCATIONS_DB_PASSWD}
+      - DB_NAME=${LOCATIONS_DB_NAME}
     
   mariadb:
     image: mariadb
@@ -49,3 +49,19 @@ services:
       - MARIADB_DATABASE=${DB_NAME}
       - MARIADB_USER=${DB_USER}
       - MARIADB_PASSWORD=${DB_PASSWD}
+
+  locations_mariadb:
+    image: mariadb
+    ports:
+      - "${LOCATIONS_DB_PORT}:3306"
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    environment:
+      - MARIADB_ROOT_PASSWORD=${LOCATIONS_DB_ROOT_PASSWORD}
+      - MARIADB_DATABASE=${LOCATIONS_DB_NAME}
+      - MARIADB_USER=${LOCATIONS_DB_USER}
+      - MARIADB_PASSWORD=${LOCATIONS_DB_PASSWD}
