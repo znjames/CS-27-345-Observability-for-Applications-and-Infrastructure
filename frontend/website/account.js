@@ -29,7 +29,7 @@ async function withdraw() {
     await makeTransaction('withdraw');
 }
 
-async function makeTransaction() {
+async function makeTransaction(type) {
     const token = localStorage.getItem('authToken');
     const amount = parseFloat(document.getElementById('amount').value);
     const message = document.getElementById('message');
@@ -40,11 +40,11 @@ async function makeTransaction() {
     }
 
     try {
-        const response = await fetch('/api/auth/balance', {
+        const response = await fetch(`/api/auth/${type}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer ${token}'
+                'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify({ amount: amount })
         });
