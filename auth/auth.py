@@ -50,7 +50,7 @@ def login():
         conn.close()
 
 
-@app.route("/api/balance", methods=["GET"])
+@app.route("/api/auth/balance", methods=["GET"])
 @jwt_required()
 def get_balance():
 
@@ -86,7 +86,7 @@ def get_balance():
         conn.close()
 
 
-@app.route("/api/deposit", methods=["POST"])
+@app.route("/api/auth/deposit", methods=["POST"])
 @jwt_required()
 def deposit():
     username = get_jwt_identity()
@@ -110,7 +110,7 @@ def deposit():
     return jsonify({"message": "Deposit successful!"}), 200
 
 
-@app.route("/api/withdraw", methods=["POST"])
+@app.route("/api/auth/withdraw", methods=["POST"])
 @jwt_required()
 def withdraw():
     username = get_jwt_identity()

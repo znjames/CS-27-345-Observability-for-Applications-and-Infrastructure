@@ -9,7 +9,7 @@ server {
     }
 
     # Routes to the locations service
-    location /api/locations {
+    location /api/locations/ {
         proxy_pass http://locations:8001;
 
         proxy_set_header Host $host;
@@ -19,7 +19,7 @@ server {
     }
 
     # Routes to authentication server
-    location /api/ {
+    location /api/auth/ {
         proxy_pass http://auth:8000;
         
         # Pass standard headers to backend

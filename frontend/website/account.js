@@ -6,7 +6,7 @@ async function fetchBalance() {
     }
 
     try {
-        const response = await fetch('/api/balance', {
+        const response = await fetch('/api/auth/balance', {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await response.json();
@@ -40,7 +40,7 @@ async function makeTransaction() {
     }
 
     try {
-        const response = await fetch('/api/${type}', {
+        const response = await fetch('/api/auth/balance', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
