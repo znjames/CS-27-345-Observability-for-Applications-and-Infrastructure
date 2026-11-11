@@ -85,6 +85,59 @@ def get_balance():
         cur.close()
         conn.close()
 
+
+@app.route("/api/deposit", methods=["POST"])
+@jwt_required()
+def deposit():
+    username = get_jwt_identity()
+    amount = request.json.get("amount")
+
+    if not amount or amount <= 0:
+        return jsonify({"message": "Invalid amount"}), 400
+
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    cur.execute(
+        "UPDATE users SET balance = balance + ? WHERE uname = ?",
+        (amount, username)
+    )
+
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    return jsonify({"message": "Deposit successful!"}), 200
+
+
+@app.route("/api/withdraw", methods=["POST"])
+@jwt_required()
+def withdraw():
+    username = get_jwt_identity()
+    amount = request.json.get("amount")
+
+    if not amount or amount <= 0:
+        return jsonify({"message": "Invalid amount"}), 400
+
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    cur.execute(
+        "UPDATE users SET balance = balance - ? WHERE uname = ? AND balance >= ?",
+        (amount, username, amount)
+    )
+
+    if cur.rowcount == 0:
+        cur.close()
+        conn.close()
+        return jsonify({"message": "Insufficient funds"}), 400
+
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    return jsonify({"message": "Withdrawal successful!"}), 200
+
 # Debug mode if run directly
 if __name__ == "__main__":
     app.run(debug=True)
