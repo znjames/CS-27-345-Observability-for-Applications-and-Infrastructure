@@ -20,4 +20,4 @@ RUN pip install -r requirements.txt
 # Copy the current directory to the project workdir
 COPY . .
 
-CMD ["gunicorn", "auth:app", "--bind", "0.0.0.0:8000"]
+CMD ["gunicorn", "locations:app", "--bind", "0.0.0.0:8000"]
