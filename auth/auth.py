@@ -10,7 +10,7 @@ app.config["JWT_SECRET_KEY"] = "supersecretkey"
 
 jwt = JWTManager(app)
 
-@app.route("/api/login", methods=["POST"])
+@app.route("/api/auth/login", methods=["POST"])
 def login():
     data = request.get_json()
 
