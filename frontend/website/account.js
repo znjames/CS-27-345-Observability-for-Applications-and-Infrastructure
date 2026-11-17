@@ -55,7 +55,8 @@ async function makeTransaction(type) {
             message.textContent = data.message;
             document.getElementById('amount').value = '';
 
-            await fetchBalance();
+            await accountDetail();
+
         } else {
             message.textContent = 'Error: ' + data.message;
         }
@@ -65,4 +66,48 @@ async function makeTransaction(type) {
 
 }
 
-document.addEventListener('DOMContentLoaded', fetchBalance);
+async function fetchHistory() {
+    const token = localStorage.getItem('authToken');
+    if (!token) return;
+
+    try {
+        const response = await fetch('/api/auth/transactions', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!response.ok) return;
+        const rows = await response.json();
+
+        const body = document.getElementById('history-body');
+        body.replaceChildren();
+
+        document.getElementById('no-history').style.display = rows.length ? 'none' : 'block';
+        document.getElementById('history').style.display = rows.length ? '' : 'none';
+
+        for (const tx of rows) {
+            const tr = document.createElement('tr');
+            const sign = tx.type === 'deposit' ? '+' : '-';
+            const cells = [
+                tx.created_at,
+                tx.type.charAt(0).toUpperCase() + tx.type.slice(1),
+                `${sign}$${tx.amount}`,
+                `$${tx.balance_after}`,
+            ];
+            for (const text of cells) {
+                const td = document.createElement('td');
+                td.textContent = text;
+                tr.appendChild(td);
+            }
+            body.appendChild(tr);
+        }
+    } catch (err) {
+      
+    }
+}
+
+function accountDetail()
+{
+    fetchBalance();
+    fetchHistory();
+}
+
+document.addEventListener('DOMContentLoaded', accountDetail);

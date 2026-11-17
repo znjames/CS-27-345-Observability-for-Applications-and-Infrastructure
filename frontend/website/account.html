@@ -15,6 +15,24 @@
     <button onclick="withdraw()">Withdraw</button>
     <p id="message"></p>
     
+
+    <h3>Transaction History</h3>
+    <table id="history" border="1">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Balance After</th>
+            </tr>
+        </thead>
+        <tbody id="history-body"></tbody>
+    </table>
+    <p id="no-history" style="display:none">No transactions yet.</p>
+
+
+
+
     <p><a href="index.html">Home</a></p>
     <script src="account.js"></script>
 </body>
