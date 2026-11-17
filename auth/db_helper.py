@@ -40,6 +40,22 @@ def init_db():
         """
         )
 
+        # Create transactions table
+        cur.execute(
+            """
+            CREATE TABLE IF NOT EXISTS transactions (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                user_id INT NOT NULL,
+                type ENUM('deposit', 'withdraw') NOT NULL,
+                amount DECIMAL(10,2) NOT NULL,
+                balance_after DECIMAL(10,2) NOT NULL,
+                created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                INDEX idx_user_created (user_id, created_at)
+            )
+        """
+        )
+
         # Hash default admin password before saving
         admin_pass_hash = generate_password_hash("admin")
 
