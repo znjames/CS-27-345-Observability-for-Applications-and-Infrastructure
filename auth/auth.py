@@ -1,14 +1,26 @@
+from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 from flask import Flask, jsonify, request
 from werkzeug.security import check_password_hash
 from db_helper import get_db_connection
 import mariadb
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity, create_access_token
+from transaction.transactions import record_transaction, get_transaction_history
+
 
 app = Flask(__name__)
 
 app.config["JWT_SECRET_KEY"] = "supersecretkey"
 
 jwt = JWTManager(app)
+
+
+def parse_amount(value):
+    try:
+        amount = Decimal(str(value)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+    except (InvalidOperation, ValueError):
+        return None
+    return amount if amount > 0 else None
+
 
 @app.route("/api/auth/login", methods=["POST"])
 def login():
@@ -80,7 +92,6 @@ def get_balance():
     except mariadb.Error as e:
         app.logger.error(f"Balance error: {e}")
         return jsonify({"message": "Internal server error"}), 500
-
     finally:
         cur.close()
         conn.close()
@@ -90,53 +101,55 @@ def get_balance():
 @jwt_required()
 def deposit():
     username = get_jwt_identity()
-    amount = request.json.get("amount")
+    data = request.get_json(silent=True) or {}
+    amount = parse_amount(data.get("amount"))
 
-    if not amount or amount <= 0:
+    if amount is None:
         return jsonify({"message": "Invalid amount"}), 400
 
-    conn = get_db_connection()
-    cur = conn.cursor()
-
-    cur.execute(
-        "UPDATE users SET balance = balance + ? WHERE uname = ?",
-        (amount, username)
-    )
-
-    conn.commit()
-    cur.close()
-    conn.close()
-
-    return jsonify({"message": "Deposit successful!"}), 200
+    result = record_transaction(username, "deposit", amount)
+    if result == "ok":
+        return jsonify({"message": "Deposit successful!"}), 200
+    if result == "not_found":
+        return jsonify({"message": "User not found"}), 404
+    return jsonify({"message": "Internal server error"}), 500
 
 
 @app.route("/api/auth/withdraw", methods=["POST"])
 @jwt_required()
 def withdraw():
     username = get_jwt_identity()
-    amount = request.json.get("amount")
+    data = request.get_json(silent=True) or {}
+    amount = parse_amount(data.get("amount"))
 
-    if not amount or amount <= 0:
+    if amount is None:
         return jsonify({"message": "Invalid amount"}), 400
 
-    conn = get_db_connection()
-    cur = conn.cursor()
-
-    cur.execute(
-        "UPDATE users SET balance = balance - ? WHERE uname = ? AND balance >= ?",
-        (amount, username, amount)
-    )
-
-    if cur.rowcount == 0:
-        cur.close()
-        conn.close()
+    result = record_transaction(username, "withdraw", amount)
+    if result == "ok":
+        return jsonify({"message": "Withdrawal successful!"}), 200
+    if result == "insufficient_funds":
         return jsonify({"message": "Insufficient funds"}), 400
+    if result == "not_found":
+        return jsonify({"message": "User not found"}), 404
+    return jsonify({"message": "Internal server error"}), 500
 
-    conn.commit()
-    cur.close()
-    conn.close()
 
-    return jsonify({"message": "Withdrawal successful!"}), 200
+@app.route("/api/auth/transactions", methods=["GET"])
+@jwt_required()
+def transactions():
+    username = get_jwt_identity()
+    rows = get_transaction_history(username, limit=50)
+    return jsonify([
+        {
+            "type": tx_type,
+            "amount": str(amount),
+            "balance_after": str(balance_after),
+            "created_at": created_at.strftime("%Y-%m-%d %H:%M:%S"),
+        }
+        for tx_type, amount, balance_after, created_at in rows
+    ])
+
 
 # Debug mode if run directly
 if __name__ == "__main__":
