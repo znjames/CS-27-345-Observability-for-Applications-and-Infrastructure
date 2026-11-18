@@ -6,7 +6,7 @@ async function fetchBalance() {
     }
 
     try {
-        const response = await fetch('/api/auth/balance', {
+        const response = await fetch('/api/banking/balance', {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await response.json();
@@ -40,7 +40,7 @@ async function makeTransaction(type) {
     }
 
     try {
-        const response = await fetch(`/api/auth/${type}`, {
+        const response = await fetch(`/api/banking/${type}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -71,7 +71,7 @@ async function fetchHistory() {
     if (!token) return;
 
     try {
-        const response = await fetch('/api/auth/transactions', {
+        const response = await fetch('/api/banking/transactions', {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         if (!response.ok) return;

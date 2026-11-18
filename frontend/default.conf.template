@@ -18,9 +18,9 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
     }
 
-    # Routes to authentication server
-    location /api/auth/ {
-        proxy_pass http://auth:8000;
+    # Routes to banking server
+    location /api/banking/ {
+        proxy_pass http://banking:8000;
         
         # Pass standard headers to backend
         proxy_set_header Host $host;

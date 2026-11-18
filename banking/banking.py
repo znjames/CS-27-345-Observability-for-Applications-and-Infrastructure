@@ -22,7 +22,7 @@ def parse_amount(value):
     return amount if amount > 0 else None
 
 
-@app.route("/api/auth/login", methods=["POST"])
+@app.route("/api/banking/login", methods=["POST"])
 def login():
     data = request.get_json()
 
@@ -62,7 +62,7 @@ def login():
         conn.close()
 
 
-@app.route("/api/auth/balance", methods=["GET"])
+@app.route("/api/banking/balance", methods=["GET"])
 @jwt_required()
 def get_balance():
 
@@ -97,7 +97,7 @@ def get_balance():
         conn.close()
 
 
-@app.route("/api/auth/deposit", methods=["POST"])
+@app.route("/api/banking/deposit", methods=["POST"])
 @jwt_required()
 def deposit():
     username = get_jwt_identity()
@@ -115,7 +115,7 @@ def deposit():
     return jsonify({"message": "Internal server error"}), 500
 
 
-@app.route("/api/auth/withdraw", methods=["POST"])
+@app.route("/api/banking/withdraw", methods=["POST"])
 @jwt_required()
 def withdraw():
     username = get_jwt_identity()
@@ -135,7 +135,7 @@ def withdraw():
     return jsonify({"message": "Internal server error"}), 500
 
 
-@app.route("/api/auth/transactions", methods=["GET"])
+@app.route("/api/banking/transactions", methods=["GET"])
 @jwt_required()
 def transactions():
     username = get_jwt_identity()

@@ -6,7 +6,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
 
     try {
         // Send login information to Authentication endpoint
-        const response = await fetch('/api/auth/login', {
+        const response = await fetch('/api/banking/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ uname, passwd })

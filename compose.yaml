@@ -4,11 +4,11 @@ services:
     ports:
       - "${WEB_PORT}:80"
     depends_on:
-      - auth
+      - banking
       - locations
 
-  auth:
-    build: auth/
+  banking:
+    build: banking/
     ports:
       - "8000"
     depends_on:
