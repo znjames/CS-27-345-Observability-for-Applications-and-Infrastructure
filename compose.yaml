@@ -65,3 +65,10 @@ services:
       - MARIADB_DATABASE=${LOCATIONS_DB_NAME}
       - MARIADB_USER=${LOCATIONS_DB_USER}
       - MARIADB_PASSWORD=${LOCATIONS_DB_PASSWD}
+
+  otel_collector:
+    image: otel/opentelemetry-collector
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otelcol/config.yaml
+    ports:
+      - 4318:4318 # OTLP http receiver
