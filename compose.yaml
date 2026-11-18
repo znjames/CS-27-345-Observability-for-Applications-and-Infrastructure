@@ -21,7 +21,7 @@ services:
       - DB_PASSWD=${DB_PASSWD}
       - DB_NAME=${DB_NAME}
       - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
-      - OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
+      - OTEL_EXPORTER_OTLP_PROTOCOL=${OTEL_EXPORTER_OTLP_PROTOCOL}
 
   locations:
     build: locations/
