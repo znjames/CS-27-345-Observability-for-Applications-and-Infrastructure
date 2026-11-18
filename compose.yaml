@@ -20,6 +20,8 @@ services:
       - DB_USER=${DB_USER}
       - DB_PASSWD=${DB_PASSWD}
       - DB_NAME=${DB_NAME}
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
+      - OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
 
   locations:
     build: locations/
@@ -71,4 +73,14 @@ services:
     volumes:
       - ./otel-collector-config.yaml:/etc/otelcol/config.yaml
     ports:
+      - 4317:4317 # OTLP grpc receiver
       - 4318:4318 # OTLP http receiver
+  
+  jaeger:
+    image: jaegertracing/all-in-one
+    ports:
+      - "16686:16686"
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    volumes:
+      - ./jaeger-data:/tmp

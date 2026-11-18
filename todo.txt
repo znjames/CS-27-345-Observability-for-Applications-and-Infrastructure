@@ -1,0 +1,5 @@
+nginx otel integration
+mariadb otel integration
+prometheus container
+prometheus integration with otel
+kafka container

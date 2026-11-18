@@ -27,8 +27,8 @@ RUN opentelemetry-bootstrap -a install
 COPY . .
 
 CMD ["opentelemetry-instrument", \
-    "--traces_exporter", "console", \
-    "--metrics_exporter", "console", \
-    "--logs_exporter", "console", \
+    "--traces_exporter", "otlp", \
+    "--metrics_exporter", "otlp", \
+    "--logs_exporter", "otlp", \
     "--service_name", "banking", \
     "gunicorn", "banking:app", "--bind", "0.0.0.0:8000"]
