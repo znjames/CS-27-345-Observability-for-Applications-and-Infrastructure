@@ -2,3 +2,5 @@ flask
 flask_cors
 flask-jwt-extended
 mariadb
+opentelemetry-distro 
+opentelemetry-exporter-otlp
