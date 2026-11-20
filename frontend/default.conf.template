@@ -1,3 +1,11 @@
+otel_exporter {
+    endpoint otel_collector:4317;
+}
+
+otel_service_name nginx;
+otel_trace on;
+otel_trace_context propagate;
+
 server {
     listen 80;
     server_name ${HOST_NAME};

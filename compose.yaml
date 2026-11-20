@@ -3,9 +3,12 @@ services:
     build: frontend/
     ports:
       - "${WEB_PORT}:80"
+    environment:
+      - HOST_NAME=${HOST_NAME}
     depends_on:
       - banking
       - locations
+      - otel_collector
 
   banking:
     build: banking/
